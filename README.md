@@ -164,13 +164,16 @@ kubectl exec -it broker-kafka-client -- /bin/bash -n kafka
 ### Produce a Test Message
 
 ```bash
-kafka-console-producer --broker-list my-cluster-kafka-bootstrap:9092 --topic test-topic
+kafka-console-producer.sh --broker-list my-cluster-kafka-bootstrap:9092 --topic test-topic
 ```
 
 Type the following JSON message and press \`Enter\`:
 
 ```json
-{"key": "value", "message": "This is a test log message"}
+
+{"request_id": 1, "status": "success", "timestamp": 1625232189, "duration": 0.12}
+{"request_id": 2, "status": "fail", "timestamp": 1625232190, "duration": 0.15}
+
 ```
 
 ### Verify Logs in Azure Blob Storage
