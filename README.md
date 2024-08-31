@@ -15,17 +15,16 @@ First, install the Strimzi operator to manage Kafka on your Kubernetes cluster.
 
 ### Add the Strimzi Helm Repository
 
-\`\`\`bash
+```bash
 helm repo add strimzi https://strimzi.io/charts/
 helm repo update
-\`\`\`
-
+```
 ### Install the Strimzi Operator
 
-\`\`\`bash
+```bash
 kubectl create namespace kafka
 helm install strimzi-kafka-operator strimzi/strimzi-kafka-operator --namespace kafka
-\`\`\`
+```
 
 ## Step 2: Deploy Kafka Cluster
 
@@ -35,7 +34,9 @@ Once the Strimzi operator is installed, you can deploy a Kafka cluster.
 
 Create a file named \`kafka-cluster.yaml\` with the following content:
 
-\`\`\`yaml
+
+```bash
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
@@ -77,19 +78,19 @@ spec:
   entityOperator:
     topicOperator: {}
     userOperator: {}
-\`\`\`
+```
 
 ### Apply the Kafka CR
 
-\`\`\`bash
+```bash
 kubectl apply -f kafka-cluster.yaml -n kafka
-\`\`\`
+```
 
 ### Verify the Kafka Deployment
 
-\`\`\`bash
+```bash
 kubectl get pods -n kafka
-\`\`\`
+```
 
 Ensure that the Kafka and Zookeeper pods are running, as well as the Strimzi cluster operator.
 
@@ -99,7 +100,10 @@ Ensure that the Kafka and Zookeeper pods are running, as well as the Strimzi clu
 
 Create a file named \`values.yaml\` with the following configuration for Fluent Bit:
 
-\`\`\`yaml
+``` bash 
+
+
+
 serviceAccount:
   create: true
 
@@ -130,22 +134,22 @@ config:
         auto_create_container on
         tls                   on
         blob_type             appendblob
-\`\`\`
+```
 
 Replace \`your_storage_account_name\` and \`your_shared_key\` with your Azure Blob Storage credentials.
 
 ### Deploy Fluent Bit Using Helm
 
-\`\`\`bash
+```bash
 kubectl create namespace logging
 helm install fluent-bit fluent/fluent-bit --namespace logging -f values.yaml
-\`\`\`
+```
 
 ### Verify Fluent Bit Deployment
 
-\`\`\`bash
+```bash
 kubectl logs -n logging daemonset/fluent-bit
-\`\`\`
+```
 
 Ensure that Fluent Bit is running and connected to Kafka and Azure Blob Storage.
 
@@ -153,21 +157,21 @@ Ensure that Fluent Bit is running and connected to Kafka and Azure Blob Storage.
 
 ### Access the Kafka Client Pod
 
-\`\`\`bash
+```bash
 kubectl exec -it broker-kafka-client -- /bin/bash -n kafka
-\`\`\`
+```
 
 ### Produce a Test Message
 
-\`\`\`bash
+```bash
 kafka-console-producer --broker-list my-cluster-kafka-bootstrap:9092 --topic test-topic
-\`\`\`
+```
 
 Type the following JSON message and press \`Enter\`:
 
-\`\`\`json
+```json
 {"key": "value", "message": "This is a test log message"}
-\`\`\`
+```
 
 ### Verify Logs in Azure Blob Storage
 
@@ -177,9 +181,9 @@ Use Azure Storage Explorer or the Azure CLI to check if the logs from \`test-top
 
 To remove the resources created in this tutorial, you can delete the namespaces:
 
-\`\`\`bash
+```bash
 kubectl delete namespace kafka
 kubectl delete namespace logging
-\`\`\`
+```
 
 This will remove the Kafka cluster, Strimzi operator, and Fluent Bit deployment from your Kubernetes cluster.
